@@ -127,34 +127,33 @@ class Cell():
         global bot_id
         global world
         global cursor_pos
-        if world[lc[0]][lc[1]] == 0:  # если впереди ничего нет
-            world[x][y], world[lc[0]][lc[1]] = world[lc[0]][lc[1]], world[x][y]  # пройти вперёд
-            self.__kids += 1
-            if cursor_pos == [x, y]:
-                cursor_pos = lc
-            gens = copy.deepcopy(self.__gens)
-            self.__energy = int(self.__energy/2)
-            if random.randint(0, 100) <= self.__gens['mutate_chance']:
-                to_mutate = random.randint(0, 6)
-                if to_mutate == 0:
-                    gens["color"] = random.randint(0, len(CELLS_COLORS)-1)
-                elif to_mutate == 1:
-                    gens["to_attack_cell"] = random.randint(-100, 100)
-                elif to_mutate == 2:
-                    gens["max_age"] = random.randint(1000, 15000)
-                elif to_mutate == 3:
-                    gens["energy_to_multiply"] = random.randint(500, 2500)
-                elif to_mutate == 4:
-                    gens["mutate_chance"] = random.randint(1, 100)
-                elif to_mutate == 5:
-                    gens["pain_gen"] = {"none": random.randint(0, 3), "food": random.randint(0, 3), "meat": random.randint(0, 3), "cell_same_color": random.randint(
-                        0, 3), "cell_different_color": random.randint(0, 3), "wall": random.randint(0, 3), "unable_to_attack": random.randint(0, 2)}
-                elif to_mutate == 6:
-                    gens["gens"][random.randint(0, GENS_LEN-1)] = {"none": random.randint(0, 3), "food": random.randint(0, 3), "meat": random.randint(
-                        0, 3), "cell_same_color": random.randint(0, 3), "cell_different_color": random.randint(0, 3), "wall": random.randint(0, 3), "unable_to_attack": random.randint(0, 2)}
-            gens['id'] = bot_id
-            world[x][y] = Cell(gens, random.randint(0, 7), self.__energy)
-            bot_id += 1
+        world[x][y], world[lc[0]][lc[1]] = world[lc[0]][lc[1]], world[x][y]  # пройти вперёд
+        self.__kids += 1
+        if cursor_pos == [x, y]:
+            cursor_pos = lc
+        gens = copy.deepcopy(self.__gens)
+        self.__energy = int(self.__energy/2)
+        if random.randint(0, 100) <= self.__gens['mutate_chance']:
+            to_mutate = random.randint(0, 6)
+            if to_mutate == 0:
+                gens["color"] = random.randint(0, len(CELLS_COLORS)-1)
+            elif to_mutate == 1:
+                gens["to_attack_cell"] = random.randint(-100, 100)
+            elif to_mutate == 2:
+                gens["max_age"] = random.randint(1000, 15000)
+            elif to_mutate == 3:
+                gens["energy_to_multiply"] = random.randint(500, 2500)
+            elif to_mutate == 4:
+                gens["mutate_chance"] = random.randint(1, 100)
+            elif to_mutate == 5:
+                gens["pain_gen"] = {"none": random.randint(0, 3), "food": random.randint(0, 3), "meat": random.randint(0, 3), "cell_same_color": random.randint(
+                    0, 3), "cell_different_color": random.randint(0, 3), "wall": random.randint(0, 3), "unable_to_attack": random.randint(0, 2)}
+            elif to_mutate == 6:
+                gens["gens"][random.randint(0, GENS_LEN-1)] = {"none": random.randint(0, 3), "food": random.randint(0, 3), "meat": random.randint(
+                    0, 3), "cell_same_color": random.randint(0, 3), "cell_different_color": random.randint(0, 3), "wall": random.randint(0, 3), "unable_to_attack": random.randint(0, 2)}
+        gens['id'] = bot_id
+        world[x][y] = Cell(gens, random.randint(0, 7), self.__energy)
+        bot_id += 1
 
     def brains(self, x, y, gen, lc) -> None:
         global cursor_pos
@@ -220,7 +219,8 @@ class Cell():
             world[x][y] = Meat(MEAT_ENERGY)  # И заменим мясом
             return
         lc = self.look(x, y)  # Определяем на какую ячейку клетка смотрит
-        if self.__energy >= self.__gens['energy_to_multiply']:  # если может делится
+        # Если может делится и впереди свободное место
+        if self.__energy >= self.__gens['energy_to_multiply'] and world[lc[0]][lc[1]] == 0:
             self.multiply(x, y, lc)  # Делится
             return
         if self.__pain: # Если больно
@@ -231,7 +231,7 @@ class Cell():
             self.__gen += 1 # В следующий раз сработает другой ген
             self.__gen %= GENS_LEN # Зациклено
         self.__age += 1 # Клетка стареет
-
+        
 
 def spawn_gens():
     global bot_id

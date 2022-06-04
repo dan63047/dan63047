@@ -1,11 +1,11 @@
-import requests, argparse, locale, json, datetime, math, ibis
+import requests, argparse, locale, json, datetime, math
 
 #           'prev_rank': None,
 #           'prev_at': -1,
 #           'next_rank': None,
 #           'next_at': -1,
 
-locale.setlocale(locale.LC_ALL, ('ru', 'UTF-8'))
+locale.setlocale(locale.LC_ALL, ('en', 'UTF-8'))
 parser = argparse.ArgumentParser(description='Insert nickname or id of player and get detalied stats into output')
 parser.add_argument("nick", metavar="p", type=str, help="Nickname or id of player")
 args = parser.parse_args()
@@ -67,6 +67,7 @@ if teto_record["data"]["user"]["league"]['gamesplayed'] > 0:
     pps = teto_record['data']['user']['league']['pps']
     vs = teto_record['data']['user']['league']['vs']
     app = apm/(pps*60)
+    vsapm = vs/apm
     dss = (vs/100)-(apm/60)
     dsp = ((vs/100)-(apm/60))/pps
     cheese = (dsp*150) + (((vs/apm)-2)*50) + (0.6-app)*125
@@ -87,6 +88,7 @@ if teto_record["data"]["user"]["league"]['gamesplayed'] > 0:
         ("Pieces Per Second:", pps),
         ("Versus Score:", vs),
         ("Attack Per Piece:", app),
+        ("VS/APM:", vsapm),
         ("DS/Second:", dss),
         ("DS/Piece:", dsp),
         ("APP+DS/Piece:", dsp + app),

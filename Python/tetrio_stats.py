@@ -41,13 +41,13 @@ data_to_print = [
     ("Registred", reg),
     ("Time played", tp),
     ("XP", f"{locale.format_string('%.0f', teto['data']['user']['xp'], True)} (lvl {(teto['data']['user']['xp']/500)**0.6+(teto['data']['user']['xp']/(5000+(max(0, teto['data']['user']['xp']-4*10**6)/5000)))+1})"),
-    ("Role", teto['data']['user']['role']),
-    ("", "")
+    ("Role", teto['data']['user']['role'])
 ]
 for key, value in data_to_print:
     print(f'{key:25} {value}')
 
 if len(teto["data"]["user"]["badges"]) > 0:
+    print("\n")
     print(f"{nothing:25} Bages")
     for badge in teto["data"]["user"]["badges"]:
         if "ts" not in badge or badge["ts"] is None:
@@ -55,9 +55,9 @@ if len(teto["data"]["user"]["badges"]) > 0:
         else:
             print(f"{datetime.datetime.fromisoformat(badge['ts'][:-1]).strftime('%c'):25} {badge['label']}")
 
-    print("\n")
 
 if teto["data"]["user"]["league"]['gamesplayed'] > 0:
+    print("\n")
     if teto["data"]["user"]["league"]["rank"] == "z":
         if teto['data']['user']['league']['percentile_rank'] == "z":
             rank = "Played less than 10 mathes"

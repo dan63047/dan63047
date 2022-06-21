@@ -147,6 +147,7 @@ if teto_records['data']['records']['blitz']['record'] is not None:
         ("Replay ID", teto_records['data']['records']['blitz']['record']['replayid']),
         ("Level", teto_records['data']['records']['blitz']['record']['endcontext']['level']),
         ("Quads", teto_records['data']['records']['blitz']['record']['endcontext']['clears']['quads']),
+        ("T-spins", teto_records['data']['records']['blitz']['record']['endcontext']['tspins']),
         ("All clears", teto_records['data']['records']['blitz']['record']['endcontext']['clears']['allclear']),
         ("Timestamp", f"{datetime.datetime.fromisoformat(teto_records['data']['records']['blitz']['record']['ts'][:-1]).strftime('%c')} ({datetime.datetime.now() - datetime.datetime.fromisoformat(teto_records['data']['records']['blitz']['record']['ts'][:-1])} ago)")
     ]

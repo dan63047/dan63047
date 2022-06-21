@@ -124,6 +124,8 @@ if teto_records['data']['records']['40l']['record'] is not None:
         ("Key presses per Piece", teto_records['data']['records']['40l']['record']['endcontext']['inputs']/(teto_records['data']['records']['40l']['record']['endcontext']['piecesplaced'])),
         ("Key presses per Second", teto_records['data']['records']['40l']['record']['endcontext']['inputs']/(teto_records['data']['records']['40l']['record']['endcontext']['finalTime']/1000)),
         ("Finnese", f"{(teto_records['data']['records']['40l']['record']['endcontext']['finesse']['perfectpieces']/teto_records['data']['records']['40l']['record']['endcontext']['piecesplaced']*100)}%, {teto_records['data']['records']['40l']['record']['endcontext']['finesse']['faults']} faults"),
+        ("T-spins", teto_records['data']['records']['40l']['record']['endcontext']['tspins']),
+        ("All clears", teto_records['data']['records']['40l']['record']['endcontext']['clears']['allclear']),
         ("Replay ID", teto_records['data']['records']['40l']['record']['replayid']),
         ("Timestamp", f"{datetime.datetime.fromisoformat(teto_records['data']['records']['40l']['record']['ts'][:-1]).strftime('%c')} ({datetime.datetime.now() - datetime.datetime.fromisoformat(teto_records['data']['records']['40l']['record']['ts'][:-1])} ago)")
     ]

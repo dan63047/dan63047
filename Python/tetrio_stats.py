@@ -78,6 +78,8 @@ if teto["data"]["user"]["league"]['gamesplayed'] > 0:
     apm = teto['data']['user']['league']['apm']
     pps = teto['data']['user']['league']['pps']
     vs = teto['data']['user']['league']['vs']
+    if vs is None:
+        vs = 0
     app = apm/(pps*60)
     vsapm = vs/apm
     dss = (vs/100)-(apm/60)

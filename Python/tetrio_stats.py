@@ -148,16 +148,16 @@ if teto_records['data']['records']['blitz']['record'] is not None:
         ("Pieces per Second", teto_records['data']['records']['blitz']['record']['endcontext']['piecesplaced']/(teto_records['data']['records']['blitz']['record']['endcontext']['finalTime']/1000)),
         ("Key presses", teto_records['data']['records']['blitz']['record']['endcontext']['inputs']),
         ("Key presses per Piece", teto_records['data']['records']['blitz']['record']['endcontext']['inputs']/(teto_records['data']['records']['blitz']['record']['endcontext']['piecesplaced'])),
-        ("Key presses per Second", teto_records['data']['records']['blitz']['record']['endcontext']['inputs']/(teto_records['data']['records']['blitz']['record']['endcontext']['finalTime']/1000)),
-        ("Replay ID", teto_records['data']['records']['blitz']['record']['replayid']),
-        ("Level", teto_records['data']['records']['blitz']['record']['endcontext']['level']),
-        ("Quads", teto_records['data']['records']['blitz']['record']['endcontext']['clears']['quads']),
-        ("T-spins", teto_records['data']['records']['blitz']['record']['endcontext']['tspins']),
-        ("All clears", teto_records['data']['records']['blitz']['record']['endcontext']['clears']['allclear']),
-        ("Timestamp", f"{datetime.datetime.fromisoformat(teto_records['data']['records']['blitz']['record']['ts'][:-1]).strftime('%c')} ({datetime.datetime.now() - datetime.datetime.fromisoformat(teto_records['data']['records']['blitz']['record']['ts'][:-1])} ago)")
+        ("Key presses per Second", teto_records['data']['records']['blitz']['record']['endcontext']['inputs']/(teto_records['data']['records']['blitz']['record']['endcontext']['finalTime']/1000))   
     ]
     if "finesse" in teto_records['data']['records']['blitz']['record']['endcontext']:
         data_to_print.append(("Finnese", f"{(teto_records['data']['records']['blitz']['record']['endcontext']['finesse']['perfectpieces']/teto_records['data']['records']['blitz']['record']['endcontext']['piecesplaced']*100)}%, {teto_records['data']['records']['blitz']['record']['endcontext']['finesse']['faults']} faults"))
+    data_to_print.append(("Level", teto_records['data']['records']['blitz']['record']['endcontext']['level']))
+    data_to_print.append(("Quads", teto_records['data']['records']['blitz']['record']['endcontext']['clears']['quads']))
+    data_to_print.append(("T-spins", teto_records['data']['records']['blitz']['record']['endcontext']['tspins']))
+    data_to_print.append(("All clears", teto_records['data']['records']['blitz']['record']['endcontext']['clears']['allclear']))
+    data_to_print.append(("Replay ID", teto_records['data']['records']['blitz']['record']['replayid']))
+    data_to_print.append(("Timestamp", f"{datetime.datetime.fromisoformat(teto_records['data']['records']['blitz']['record']['ts'][:-1]).strftime('%c')} ({datetime.datetime.now() - datetime.datetime.fromisoformat(teto_records['data']['records']['blitz']['record']['ts'][:-1])} ago)"))
     if teto_records['data']['records']['blitz']['rank'] is not None:
         data_to_print.append(("Leaderboard standing", f"№{teto_records['data']['records']['blitz']['rank']}"))
     for key, value in data_to_print:

@@ -65,6 +65,8 @@ if teto["data"]["user"]["league"]['gamesplayed'] > 0:
             rd = "Big"
         else:
             rank = f"Probably around {teto['data']['user']['league']['percentile_rank'].upper()}"
+            gliko = teto['data']['user']['league']['glicko']
+            rd = teto['data']['user']['league']['rd']
         standing = "No"
     else:
         rank = teto["data"]["user"]["league"]["rank"].upper()
@@ -147,7 +149,6 @@ if teto_records['data']['records']['blitz']['record'] is not None:
         ("Key presses", teto_records['data']['records']['blitz']['record']['endcontext']['inputs']),
         ("Key presses per Piece", teto_records['data']['records']['blitz']['record']['endcontext']['inputs']/(teto_records['data']['records']['blitz']['record']['endcontext']['piecesplaced'])),
         ("Key presses per Second", teto_records['data']['records']['blitz']['record']['endcontext']['inputs']/(teto_records['data']['records']['blitz']['record']['endcontext']['finalTime']/1000)),
-        ("Finnese", f"{(teto_records['data']['records']['blitz']['record']['endcontext']['finesse']['perfectpieces']/teto_records['data']['records']['blitz']['record']['endcontext']['piecesplaced']*100)}%, {teto_records['data']['records']['blitz']['record']['endcontext']['finesse']['faults']} faults"),
         ("Replay ID", teto_records['data']['records']['blitz']['record']['replayid']),
         ("Level", teto_records['data']['records']['blitz']['record']['endcontext']['level']),
         ("Quads", teto_records['data']['records']['blitz']['record']['endcontext']['clears']['quads']),
@@ -155,6 +156,8 @@ if teto_records['data']['records']['blitz']['record'] is not None:
         ("All clears", teto_records['data']['records']['blitz']['record']['endcontext']['clears']['allclear']),
         ("Timestamp", f"{datetime.datetime.fromisoformat(teto_records['data']['records']['blitz']['record']['ts'][:-1]).strftime('%c')} ({datetime.datetime.now() - datetime.datetime.fromisoformat(teto_records['data']['records']['blitz']['record']['ts'][:-1])} ago)")
     ]
+    if "finesse" in teto_records['data']['records']['blitz']['record']['endcontext']:
+        data_to_print.append(("Finnese", f"{(teto_records['data']['records']['blitz']['record']['endcontext']['finesse']['perfectpieces']/teto_records['data']['records']['blitz']['record']['endcontext']['piecesplaced']*100)}%, {teto_records['data']['records']['blitz']['record']['endcontext']['finesse']['faults']} faults"))
     if teto_records['data']['records']['blitz']['rank'] is not None:
         data_to_print.append(("Leaderboard standing", f"№{teto_records['data']['records']['blitz']['rank']}"))
     for key, value in data_to_print:

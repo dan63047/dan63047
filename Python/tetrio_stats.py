@@ -1,15 +1,32 @@
 import requests, argparse, locale, json, datetime, math
-
-#           'prev_rank': None,
-#           'prev_at': -1,
-#           'next_rank': None,
-#           'next_at': -1,
-
 locale.setlocale(locale.LC_ALL, ('en', 'UTF-8'))
 parser = argparse.ArgumentParser(description='Insert nickname or id of player and get detalied stats into output')
 parser.add_argument("nick", metavar="p", type=str, help="Nickname or id of player")
 args = parser.parse_args()
 nick = args.nick.lower()
+
+def progressbar(start, end, current, length, start_text, end_text):
+    bar = ""
+    symbols = ("░", "▒", "▓", "█")
+    states = 4*length - len(start_text) - len(end_text)
+    length_left = length - len(start_text) - len(end_text) - 2
+    full_bars = ((current - start) / (end - start)) * length_left
+    d1 = full_bars
+    bar += start_text + " "
+    while full_bars >=1:
+        bar += symbols[3]
+        length_left -= 1
+        full_bars -= 1
+        if length_left == 0:
+            break
+    if full_bars > 0 and length_left > 0:
+        bar += symbols[int(full_bars/len(symbols)-1)]
+        length_left -= 1
+    while length_left > 0:
+        bar += " "
+        length_left -= 1
+    bar += " " + end_text
+    return bar
 
 request = requests.get(f"https://ch.tetr.io/api/users/{nick}")
 if not request.ok:
@@ -25,14 +42,38 @@ if not teto['success']:
     exit(f"Unsuccessful {request.url} request: {teto['error']}")
 data_from = datetime.datetime.fromtimestamp(teto['cache']['cached_at']/1000)
 nothing = ""
+
 if teto['data']['user']['gametime'] == -1:
     tp = "???"
 else:
     tp = datetime.timedelta(seconds=teto['data']['user']['gametime'])
+
 if "ts" in teto['data']['user']:
     reg = f"{datetime.datetime.fromisoformat(teto['data']['user']['ts'][:-1]).strftime('%c')} ({datetime.datetime.now() - datetime.datetime.fromisoformat(teto['data']['user']['ts'][:-1])} ago)"
 else:
     reg = "Since the beginning"
+
+if teto['data']['user']['gameswon'] == -1:
+    gw = "???"
+else:
+    gw = teto['data']['user']['gameswon']
+
+if teto['data']['user']['gamesplayed'] == -1:
+    gp = "???"
+else:
+    gp = teto['data']['user']['gamesplayed']
+
+if "friend_count" in teto['data']['user']:
+    friends = teto['data']['user']['friend_count']
+else:
+    friends = "???"
+
+if teto['data']['user']['supporter_tier'] > 0:
+    supporter = f"Supporter tier {teto['data']['user']['supporter_tier']}"
+else:
+    supporter = "Not a supporter"
+
+level = (teto['data']['user']['xp']/500)**0.6+(teto['data']['user']['xp']/(5000+(max(0, teto['data']['user']['xp']-4*10**6)/5000)))+1
 data_to_print = [
     (f"{request.status_code} {request.reason}", data_from.strftime('%c')),
     ("", ""),
@@ -40,11 +81,24 @@ data_to_print = [
     ("Country", teto['data']['user']['country']),
     ("Registred", reg),
     ("Time played", tp),
-    ("XP", f"{locale.format_string('%.0f', teto['data']['user']['xp'], True)} (lvl {(teto['data']['user']['xp']/500)**0.6+(teto['data']['user']['xp']/(5000+(max(0, teto['data']['user']['xp']-4*10**6)/5000)))+1})"),
-    ("Role", teto['data']['user']['role'])
+    (teto['data']['user']['role'], supporter),
+    (f"{gw} / {gp} Games", f"{friends} Friends"),
+    (f'{progressbar(int(level), int(level)+1, level, 80, locale.format_string("%.0f", teto["data"]["user"]["xp"], True)+" XP", f"lvl {int(level)}")}', "")
 ]
 for key, value in data_to_print:
     print(f'{key:25} {value}')
+
+if "distinguishment" in teto["data"]["user"]:
+    print("\n")
+    print(f"{nothing:25} Distinguishment")
+    data_to_print = [
+        ("Header", teto['data']['user']['distinguishment']["header"]),
+        ("Footer", teto['data']['user']['distinguishment']['footer']),
+        ("Type", teto['data']['user']['distinguishment']['type']),
+        ("Detali", teto['data']['user']['distinguishment']['detail'])
+    ]
+    for key, value in data_to_print:
+        print(f'{key:25} {value}')
 
 if len(teto["data"]["user"]["badges"]) > 0:
     print("\n")
@@ -55,23 +109,20 @@ if len(teto["data"]["user"]["badges"]) > 0:
         else:
             print(f"{datetime.datetime.fromisoformat(badge['ts'][:-1]).strftime('%c'):25} {badge['label']}")
 
-
 if teto["data"]["user"]["league"]['gamesplayed'] > 0:
     print("\n")
     if teto["data"]["user"]["league"]["rank"] == "z":
         if teto['data']['user']['league']['percentile_rank'] == "z":
             rank = "Played less than 10 mathes"
             gliko = f"{10 - teto['data']['user']['league']['gamesplayed']} matches until being rated"
-            rd = "Big"
         else:
-            rank = f"Probably around {teto['data']['user']['league']['percentile_rank'].upper()}"
-            gliko = teto['data']['user']['league']['glicko']
-            rd = teto['data']['user']['league']['rd']
-        standing = "No"
+            rank = f"Probably around {teto['data']['user']['league']['percentile_rank'].upper()} (top {(teto['data']['user']['league']['percentile']*100):.2f}%)"
+            gliko = f"{teto['data']['user']['league']['glicko']:.2f}±{teto['data']['user']['league']['rd']:.2f} GLICKO"
+        standing = "No standing"
     else:
         rank = teto["data"]["user"]["league"]["rank"].upper()
-        gliko = teto['data']['user']['league']['glicko']
-        rd = teto['data']['user']['league']['rd']
+        rank = progressbar(teto['data']['user']['league']['prev_at'], teto['data']['user']['league']['next_at'], teto['data']['user']['league']['standing'], 80, f"{rank} (top {(teto['data']['user']['league']['percentile']*100):.2f}%)", f"{teto['data']['user']['league']['rating']:.2f} TR")
+        gliko = f"{teto['data']['user']['league']['glicko']:.2f}±{teto['data']['user']['league']['rd']:.2f} GLICKO"
         if teto['data']['user']['country'] is not None:
             standing = f"№{teto['data']['user']['league']['standing']} (№{teto['data']['user']['league']['standing_local']} in {teto['data']['user']['country']})"
         else:
@@ -93,16 +144,12 @@ if teto["data"]["user"]["league"]['gamesplayed'] > 0:
 
     data_to_print = [
         ("", "Tetra League"),
-        ("Rank", f"{rank} (top {teto['data']['user']['league']['percentile']*100}%)"),
-        ("Tetra Rating", teto['data']['user']['league']['rating']),
-        ("Gliko Rating",  gliko),
-        ("Rating Deviation", rd),
-        ("Leaderboard standing", standing),
-        ("Games played", teto['data']['user']['league']['gamesplayed']),
-        ("Games won", f"{teto['data']['user']['league']['gameswon']} ({teto['data']['user']['league']['gameswon']/teto['data']['user']['league']['gamesplayed']*100}%)"),
-        ("Attack Per Minute", apm),
-        ("Pieces Per Second", pps),
-        ("Versus Score", vs),
+        (rank, ""),
+        (gliko, standing),
+        (f"{teto['data']['user']['league']['gameswon']} / {teto['data']['user']['league']['gamesplayed']} Games", f"{teto['data']['user']['league']['gameswon']/teto['data']['user']['league']['gamesplayed']*100:.2f}% WR"),
+        (f"{apm} APM, {pps} PPS, {vs} VS", ""),
+        ("", ""),
+        ("", "For Nerds"),
         ("Attack Per Piece", app),
         ("VS/APM", vsapm),
         ("DS/Second", dss),
@@ -173,4 +220,12 @@ if teto_records['data']['zen'] is not None:
 
     for key, value in data_to_print:
         print(f'{key:25} {value}')
-        
+
+if len(teto["data"]["user"]["connections"]) > 0:
+    print("\n")
+    data_to_print = [("", "Connections")]
+    if "discord" in teto['data']['user']['connections']:
+        data_to_print.append(('Discord', f"{teto['data']['user']['connections']['discord']['username']}"))
+    
+    for key, value in data_to_print:
+        print(f'{key:25} {value}')

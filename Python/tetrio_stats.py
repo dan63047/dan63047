@@ -147,7 +147,7 @@ if teto["data"]["user"]["league"]['gamesplayed'] > 0:
         (rank, ""),
         (gliko, standing),
         (f"{teto['data']['user']['league']['gameswon']} / {teto['data']['user']['league']['gamesplayed']} Games", f"{teto['data']['user']['league']['gameswon']/teto['data']['user']['league']['gamesplayed']*100:.2f}% WR"),
-        (f"{apm} APM, {pps} PPS, {vs} VS", ""),
+        (f"{apm} APM  {pps} PPS  {vs} VS    Top Rank: {teto['data']['user']['league']['bestrank'].upper()}", ""),
         ("", ""),
         ("", "For Nerds"),
         ("Attack Per Piece", app),

@@ -130,7 +130,7 @@ if teto["data"]["user"]["league"]['gamesplayed'] > 0:
             gliko = f"{10 - teto['data']['user']['league']['gamesplayed']} matches until being rated"
             bestrank = "?"
         else:
-            rank = f"Probably around {teto['data']['user']['league']['percentile_rank'].upper()} (top {(teto['data']['user']['league']['percentile']*100):.2f}%)"
+            rank = f"Probably around {teto['data']['user']['league']['percentile_rank'].upper()} (top {(teto['data']['user']['league']['percentile']*100):.2f}%)  {teto['data']['user']['league']['rating']:.2f} TR"
             gliko = f"{teto['data']['user']['league']['glicko']:.2f}±{teto['data']['user']['league']['rd']:.2f} GLICKO"
             bestrank = teto['data']['user']['league']['bestrank'].upper()
         standing = "No standing"

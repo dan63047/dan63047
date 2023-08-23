@@ -28,6 +28,19 @@ void shuffle(unsigned long int *array, size_t n)
     }
 }
 
+
+char * num4(unsigned long num){
+    char *res = malloc(6 * sizeof(char));
+    sprintf(res, "%lu", num);
+    const size_t length = NELEMS(res);
+    if (length <= 4) {
+        printf("here\n");
+        return res;
+    }
+    printf("anti here\n");
+    return res;
+}
+
 int correct(unsigned long  *arr, int size) {
     while ( --size > 0 )
         if (arr[size]-1 != arr[size-1])
@@ -64,7 +77,7 @@ int main(){
     }
     time(&end);
     double wasted = difftime(end, start);
-    timespec lol;
+    struct timespec lol;
     timespec_get(&lol, NULL);
     printf("\nDone: ");
     if (arr_len > 100){
@@ -74,5 +87,6 @@ int main(){
     }
     setlocale(LC_ALL, "en_US.UTF-8");
     printf("Steps: %'d\nWasted %'.0f seconds\nSpeed: %'f steps/second\n", steps, wasted, steps/wasted);
+    printf(num4(steps));
     return 0;
 }

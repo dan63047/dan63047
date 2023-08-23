@@ -4,7 +4,7 @@ import locale
 import json
 import datetime
 import math
-locale.setlocale(locale.LC_ALL, ('en', 'UTF-8'))
+# locale.setlocale(locale.LC_ALL, ('en', 'UTF-8'))
 parser = argparse.ArgumentParser(
     description='Insert nickname or id of player and get detalied stats into output')
 parser.add_argument("nick", metavar="p", type=str,
@@ -301,9 +301,7 @@ if teto_records['data']['zen'] is not None:
     print("\n")
     data_to_print = [
         ("", "Zen"),
-        ("Level", teto_records['data']['zen']['level']),
-        ("Score", locale.format_string(
-            '%.0f', teto_records['data']['zen']['score'], True))
+        (f"Level {teto_records['data']['zen']['level']}", f"Score {locale.format_string('%.0f', teto_records['data']['zen']['score'], True)}")
     ]
 
     for key, value in data_to_print:
